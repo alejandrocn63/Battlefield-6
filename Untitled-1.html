@@ -1,0 +1,92 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head> 
+    <meta charset="UTF-8">
+    <title>MIS APIs</title>
+    <style>
+        body {
+            font-family: Arial;
+            text-align: center;
+            padding: 20px;
+            
+            background-image: linear-gradient(rgba(84, 76, 120, 0), rgba(174, 60, 60, 0));
+            background-size: cover;
+            background-attachment: fixed;
+            position: relative;
+            color: #f4f4f4;
+        }
+
+        .caja {
+            background: rgba(0, 0, 0, 0.4);
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px auto;
+            max-width: 400px;
+        }
+
+        input { padding: 5px; border-radius: 5px; border: none; }
+        button { padding: 10px; cursor: pointer; margin-top: 10px; border-radius: 5px; border: none; font-weight: bold; }
+        .info { margin-top: 15px; }
+        img { border-radius: 10px; margin-top: 10px; }
+    </style>
+</head>
+<body>
+
+    <h1>Mis APIs</h1>
+
+    <div class="caja">
+        <h3>Buscador Pokémon</h3>
+        <input type="text" id="pokeInput" placeholder="Nombre o ID">
+        <button id="btnPoke">Buscar</button>
+        <div id="resPoke" class="info"></div>
+    </div>
+
+    <div class="caja">
+        <h3>Chistes Aleatorios</h3>
+        <button id="btnChiste">Dame un chiste</button>
+        <div id="resChiste" class="info"></div>
+    </div>
+
+    <script>
+        var btnPoke = document.getElementById("btnPoke");
+        var resPoke = document.getElementById("resPoke");
+        var pokeInput = document.getElementById("pokeInput");
+
+        var btnChiste = document.getElementById("btnChiste");
+        var resChiste = document.getElementById("resChiste");
+
+        // Lógica Pokémon
+        btnPoke.onclick = function() {
+            var valor = pokeInput.value.toLowerCase();
+            fetch("https://pokeapi.co/api/v2/pokemon/" + valor)
+            .then(function(res) { return res.json(); })
+            .then(function(data) {
+                resPoke.innerHTML = "<b>" + data.name.toUpperCase() + "</b><br>" +
+                                   "<img src='" + data.sprites.front_default + "' width='150'/><br>" +
+                                   "Tipo: " + data.types[0].type.name + "<br>" +
+                                   "Vida: " + data.stats[0].base_stat;
+            })
+            .catch(function() { resPoke.innerHTML = "No se encontró."; });
+        };
+
+        
+        btnChiste.onclick = function() {
+        
+            fetch("https://v2.jokeapi.dev/joke/Any?lang=es")
+            .then(function(res) { return res.json(); })
+            .then(function(data) {
+                
+                if (data.error) {
+                    resChiste.innerHTML = "No hay chistes en español ahora mismo. Prueba otra vez.";
+                } else if (data.type === "single") {
+                    
+                    resChiste.innerHTML = "<p>" + data.joke + "</p>";
+                } else {
+                    
+                    resChiste.innerHTML = "<p><b>" + data.setup + "</b></p><p><i>" + data.delivery + "</i></p>";
+                }
+            });
+        };
+    </script>
+</body>
+</html>
